@@ -97,7 +97,7 @@ and write out the LLVM IR equivalent.
 If your BF is rusty, `>` simply increments the cell index.
 
 {% highlight llvm %}
-%cell_index = load i32* %cell_index_ptr
+%cell_index = load i32, i32* %cell_index_ptr
 %new_cell_index = add i32 1, %cell_index
 store i32 %new_cell_index, i32* %cell_index_ptr
 {% endhighlight %}
@@ -128,10 +128,10 @@ to calculate the pointer. The
 translation then looks like this:
 
 {% highlight llvm %}
-%cell_index = load i32* %cell_index_ptr
+%cell_index = load i32, i32* %cell_index_ptr
 %cell_ptr = getelementptr i8* %cells, i32 %cell_index
 
-%current_value = load i8* %cell_ptr
+%current_value = load i8, i8* %cell_ptr
 %new_value = add i8 %current_value, 1
 store i8 %new_value, i8* %cell_ptr
 {% endhighlight %}
@@ -157,7 +157,7 @@ To implement `,` we call `getchar`, truncate it to a char, and write it
 to the current cell.
 
 {% highlight llvm %}
-%cell_index = load i32* %cell_index_ptr
+%cell_index = load i32, i32* %cell_index_ptr
 %cell_ptr = getelementptr i8* %cells, i32 %cell_index
 
 %input_int = call i32 @getchar()
@@ -168,10 +168,10 @@ store i8 %input_byte, i8* %cell_ptr
 `.` is the reverse: we read the cell, sign extend it, then call `putchar`.
 
 {% highlight llvm %}
-%cell_index = load i32* %cell_index_ptr
+%cell_index = load i32, i32* %cell_index_ptr
 %cell_ptr = getelementptr i8* %cells, i32 %cell_index
 
-%current_cell = load i8* %cell_ptr
+%current_cell = load i8, i8* %cell_ptr
 %current_cell_word = sext i8 %current_cell to i32
 call i32 @putchar(i32 %current_cell_word)
 {% endhighlight %}
@@ -188,9 +188,9 @@ we need to jump back to the start.
 
 {% highlight llvm %}
 loop_header:
-  %cell_index = load i32* %cell_index_ptr
+  %cell_index = load i32, i32* %cell_index_ptr
   %cell_ptr = getelementptr i8* %cells, i32 %cell_index
-  %cell_value = load i8* %cell_ptr
+  %cell_value = load i8, i8* %cell_ptr
   %is_zero = icmp eq i8 %cell_value, 0
   br i1 %is_zero, label %loop_after, label %loop_body
 
